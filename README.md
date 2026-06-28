@@ -1,186 +1,169 @@
-# Project: Image Classification with Deep Learning & Transfer Learning
+# Image Classification using Deep Learning
 
-## Overview
+## 📌 Project Overview
 
-This notebook is a comprehensive guide for building image classification models using **Transfer Learning** and **Deep Neural Networks**. It covers data preparation, training, and evaluation with popular pre-trained architectures.
-
-**Main Goal:** Classify images into **26 different classes** using state-of-the-art techniques.
+This project focuses on image classification using Deep Learning techniques with TensorFlow and Keras. Multiple convolutional neural network architectures were implemented and evaluated, including a custom CNN and several Transfer Learning models. The project covers data preprocessing, image augmentation, model training, fine-tuning, and performance evaluation.
 
 ---
 
-## Table of Contents
+## 🎯 Objectives
 
-1. Libraries & Imports
-2. Data Preparation & Cleaning
-3. Data Generators & Augmentation
-4. Baseline CNN Model
-5. Transfer Learning with VGG16/VGG19
-6. Data Balancing
-7. Pre-trained Models
-8. Model Evaluation
+- Build an image classification model using Deep Learning.
+- Preprocess and augment image datasets.
+- Implement a custom CNN model.
+- Apply Transfer Learning using pre-trained models.
+- Compare different model architectures.
+- Evaluate classification performance.
 
 ---
 
-## 1. Libraries & Imports
+## 🛠️ Technologies Used
 
-```python
-# Data & Numerical
-import numpy as np
-import pandas as pd
-import os
-import matplotlib.pyplot as plt
-import seaborn as sns
+- Python
+- TensorFlow / Keras
+- NumPy
+- Pandas
+- Matplotlib
+- Seaborn
+- Scikit-learn
 
-# Deep Learning
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import ResNet50, EfficientNetB0, InceptionV3, VGG16, VGG19
-from tensorflow.keras.layers import Dense, Dropout, GlobalAveragePooling2D
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.optimizers import Adam
+---
+
+## 📂 Dataset
+
+The dataset consists of images organized into training and testing directories.
+
+### Dataset Preparation
+
+- Removed unnecessary folders (e.g., `.ipynb_checkpoints`, `Class_Nothing`, `Class_Space`).
+- Verified that both training and testing datasets contain the same image classes.
+- Images were resized to **224 × 224** pixels.
+
+---
+
+## ⚙️ Data Preprocessing
+
+- Image Resizing (224×224)
+- Image Normalization
+- Data Augmentation
+  - Rotation
+  - Zoom
+  - Width Shift
+  - Height Shift
+  - Brightness Adjustment
+  - Horizontal Flip
+- Training / Validation Split
+
+---
+
+## 🧠 Models Used
+
+### 1. Custom CNN
+A Convolutional Neural Network built from scratch using:
+- Convolutional Layers
+- MaxPooling Layers
+- Dropout Layers
+- Dense Layers
+- Softmax Output Layer
+
+### 2. VGG16 (Transfer Learning)
+- Pre-trained on ImageNet
+- Frozen base layers
+- Custom classification head
+- Fine-tuning applied
+
+### 3. ResNet50
+- Pre-trained ResNet50 architecture
+- Transfer Learning for feature extraction
+- Performance comparison with other models
+
+### 4. EfficientNet
+- EfficientNet pre-trained model
+- Lightweight architecture with high classification performance
+- Used for comparison and experimentation
+
+---
+
+## 📈 Model Evaluation
+
+The models were evaluated using:
+
+- Training Accuracy
+- Validation Accuracy
+- Test Accuracy
+- Training Loss
+- Validation Loss
+
+---
+
+## 📊 Visualizations
+
+The notebook includes:
+
+- Sample Image Visualization
+- Augmented Images Preview
+- Training Accuracy Curves
+- Validation Accuracy Curves
+- Loss Curves
+- Performance Comparison
+
+---
+
+## 🚀 Project Workflow
+
+1. Import required libraries.
+2. Load and inspect the dataset.
+3. Clean unnecessary folders.
+4. Preprocess the images.
+5. Apply data augmentation.
+6. Create training and validation datasets.
+7. Train the Custom CNN model.
+8. Apply Transfer Learning using:
+   - VGG16
+   - ResNet50
+   - EfficientNet
+9. Compare model performance.
+10. Evaluate and visualize the results.
+
+---
+
+## 📁 Project Structure
+
+```
+Image_Classification/
+│
+├── Image_Classification.ipynb
+├── train/
+├── test/
+├── README.md
+└── requirements.txt
 ```
 
-**Key Libraries:**
+---
 
-* TensorFlow/Keras – deep learning framework
-* NumPy & Pandas – data manipulation
-* Matplotlib & Seaborn – visualization
-* ImageDataGenerator – data augmentation
+## 📚 Learning Outcomes
+
+- Image Preprocessing
+- Data Augmentation
+- Convolutional Neural Networks (CNN)
+- Transfer Learning
+- Fine-Tuning Pre-trained Models
+- Deep Learning with TensorFlow/Keras
+- Image Classification
+- Model Evaluation
 
 ---
 
-## 2. Data Preparation & Cleaning
+## 🚀 Future Improvements
 
-* **Train Set:** `train/` directory with 26 classes
-* **Test Set:** `test/` directory with 26 classes
-
-### Steps:
-
-1. Verify class consistency between train and test sets
-2. Remove unwanted classes (e.g., `Class_Nothing`, `Class_Space`)
-3. Clean checkpoint directories
+- Hyperparameter tuning.
+- Test additional architectures such as MobileNet and InceptionV3.
+- Generate a Confusion Matrix and Classification Report.
+- Deploy the trained model using Streamlit or Flask.
 
 ---
 
-## 3. Data Generators & Augmentation
+## 👨‍💻 Author
 
-```python
-IMG_SIZE = 224
-BATCH_SIZE = 32
-NUM_CLASSES = 26
-TRAIN_DIR = 'train/'
-TEST_DIR = 'test/'
-```
-
-**Augmentation Techniques:**
-
-* Random rotations (±15 degrees)
-* Zoom
-* Width & height shifts
-* Brightness adjustment
-* Horizontal flips
-* Normalization to [0,1]
-
-**Dataset Split:**
-
-* Train: 90% (32,432 images)
-* Validation: 10% (3,587 images)
-* Test: 253 images
-
----
-
-## 4. Baseline CNN Model
-
-* 3 convolutional blocks + pooling
-* Flatten layer
-* Dense layers with dropout
-* Softmax output for 26 classes
-
-Baseline for comparison with transfer learning models.
-
----
-
-## 5. Transfer Learning with VGG16/VGG19
-
-Steps:
-
-1. Load pre-trained VGG16/VGG19 (ImageNet)
-2. Freeze base layers
-3. Add custom dense layers
-4. Train top layers
-5. Optional fine-tuning with low learning rate
-
----
-
-## 6. Data Balancing
-
-Techniques:
-
-* Count images per class
-* Augmentation for underrepresented classes
-* Undersampling for oversized classes
-* Target: equal samples per class (e.g., 389)
-
----
-
-## 7. Pre-trained Models
-
-* **VGG16/VGG19:** Simple, 224x224 input, easy for transfer learning
-* **ResNet50:** Skip connections, better generalization, 224x224, Test Accuracy: 95.26%
-* **InceptionV3:** Multi-scale features, input 299x299
-* **EfficientNetB0:** Efficient scaling, suitable for mobile/edge deployment
-
----
-
-## 8. Model Evaluation
-
-Metrics:
-
-* Accuracy
-* Confusion Matrix
-* Classification Report
-* Training history plots
-
-Model selection based on high test accuracy, low overfitting, balanced class performance.
-
----
-
-## Key Concepts
-
-* **Transfer Learning:** Use pre-trained weights, freeze early layers, train top layers
-* **Data Augmentation:** Rotation, zoom, shifts, brightness, flips
-* **Class Imbalance:** Handle with augmentation, undersampling, or class weights
-
----
-
-## Best Practices
-
-1. Start simple (VGG16) and progress to ResNet50
-2. Use data augmentation
-3. Freeze base layers initially
-4. Monitor validation set for overfitting
-5. Fine-tune carefully
-6. Balance dataset
-7. Save models and checkpoints
-
----
-
-## Notes
-
-* Standard image size: 224x224 (except InceptionV3: 299x299)
-* 26 classes used, adaptable to more
-* ImageNet pre-trained weights for faster training and better performance
-
----
-
-## Summary
-
-Pipeline includes:
-
-* Data preparation & cleaning
-* Data augmentation & generators
-* Baseline CNN
-* Transfer learning
-* Data balancing
-* Model training & evaluation
-* Model comparison & recommendations
+**walaa omar**
+Deep Learning | Computer Vision | Data Science
