@@ -167,5 +167,4 @@ Image_Classification/
 
 **walaa omar**
 
-
-Deep Learning | Computer Vision | Data Science
+**Deep Learning | Computer Vision | Data Science**
